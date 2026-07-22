@@ -8,10 +8,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Documentation](https://img.shields.io/badge/Docs-docs.intutic.ai-6f42c1)](https://docs.intutic.ai)
 [![Website](https://img.shields.io/badge/Website-intutic.ai-0070f3)](https://intutic.ai)
-[![Slack Community](https://img.shields.io/badge/Slack-Join_Community-4A154B?logo=slack)](https://join.slack.com/t/intutic/shared_invite/zt-44mbgg651-0g1B6PkRTfvh2so3fXhnnA)
+[![Slack Community](https://img.shields.io/badge/Slack-Join_Community-4A154B?logo=slack)](https://join.slack.com/t/intuticai/shared_invite/zt-44nmni7r6-W2xts5vAHe90L_ExXfkXVw)
 [![X (Twitter)](https://img.shields.io/badge/X-@IntuticAI-black?logo=x)](https://x.com/IntuticAI)
 
-[Website](https://intutic.ai) • [Documentation](https://docs.intutic.ai) • [Main Repository](https://github.com/intutic/intutic) • [Slack](https://join.slack.com/t/intutic/shared_invite/zt-44mbgg651-0g1B6PkRTfvh2so3fXhnnA)
+[Website](https://intutic.ai) • [Documentation](https://docs.intutic.ai) • [Main Repository](https://github.com/intutic/intutic) • [Slack](https://join.slack.com/t/intuticai/shared_invite/zt-44nmni7r6-W2xts5vAHe90L_ExXfkXVw)
 
 </div>
 
@@ -94,7 +94,7 @@ Intutic provides zero-code-change governance across **18+ AI tools**:
 
 * 📖 **Documentation Portal:** [docs.intutic.ai](https://docs.intutic.ai)
 * 🌐 **Official Website:** [intutic.ai](https://intutic.ai)
-* 💬 **Slack Community:** [Join Intutic Slack](https://join.slack.com/t/intutic/shared_invite/zt-44mbgg651-0g1B6PkRTfvh2so3fXhnnA)
+* 💬 **Slack Community:** [Join Intutic Slack](https://join.slack.com/t/intuticai/shared_invite/zt-44nmni7r6-W2xts5vAHe90L_ExXfkXVw)
 * 🐤 **Follow on X:** [@IntuticAI](https://x.com/IntuticAI)
 * 💼 **LinkedIn Page:** [Intutic on LinkedIn](https://www.linkedin.com/company/intutic-ai/)
 * 📧 **Contact Support:** [support@intutic.ai](mailto:support@intutic.ai)
