@@ -5,6 +5,7 @@
 **Real-time security, secret DLP, and loop burn prevention for autonomous AI coding agents.**
 
 [![GitHub Stars](https://img.shields.io/github/stars/intutic/intutic?style=social)](https://github.com/intutic/intutic)
+[![npm](https://img.shields.io/npm/v/@intutic/cli?label=npm&color=cb3837&logo=npm)](https://www.npmjs.com/package/@intutic/cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Documentation](https://img.shields.io/badge/Docs-docs.intutic.ai-6f42c1)](https://docs.intutic.ai)
 [![Website](https://img.shields.io/badge/Website-intutic.ai-0070f3)](https://intutic.ai)
@@ -12,6 +13,8 @@
 [![X (Twitter)](https://img.shields.io/badge/X-@IntuticAI-black?logo=x)](https://x.com/IntuticAI)
 
 [Website](https://intutic.ai) • [Documentation](https://docs.intutic.ai) • [Main Repository](https://github.com/intutic/intutic) • [Slack](https://join.slack.com/t/intuticai/shared_invite/zt-44nmni7r6-W2xts5vAHe90L_ExXfkXVw)
+
+<img src="https://raw.githubusercontent.com/intutic/intutic/main/assets/demo.gif" alt="Intutic blocking a destructive agent tool call in real time" width="100%">
 
 </div>
 
@@ -30,7 +33,6 @@ Existing AI observability tools are **passive** — they log execution data *aft
 | Repository | Description | Stars / Status |
 | :--- | :--- | :--- |
 | 🛡️ [**`intutic/intutic`**](https://github.com/intutic/intutic) | The primary open-core repository containing the Rust Proxy, `@intutic/cli`, `@intutic/clawde` SDK, and WASM Rules Engine. | [![GitHub Stars](https://img.shields.io/github/stars/intutic/intutic?style=flat)](https://github.com/intutic/intutic) |
-| 🌐 [**`intutic/website`**](https://github.com/intutic/website) | Public marketing website source for [intutic.ai](https://intutic.ai). | [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) |
 
 ---
 
@@ -68,14 +70,16 @@ flowchart TD
 npm install -g @intutic/cli @intutic/proxy
 ```
 
-### 2. Connect Your Project
+### 2. Start the Proxy
 ```bash
-intutic connect
+intutic start
 ```
+No account, no Docker, no config file. Everything runs on your machine.
 
 ### 3. Route Your Agent
 ```bash
-export ANTHROPIC_BASE_URL="http://localhost:4000/v1"
+# Anthropic SDK and Claude Code append /v1/messages themselves — host only.
+export ANTHROPIC_BASE_URL="http://localhost:4000"
 export OPENAI_BASE_URL="http://localhost:4000/v1"
 ```
 
