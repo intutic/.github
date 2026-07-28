@@ -2,7 +2,7 @@
 
 # Intutic — The Circuit Breaker for AI Agents
 
-**Real-time security, secret DLP, and loop burn prevention for autonomous AI coding agents.**
+**Real-time security, secret DLP, graph guardrails and loop burn prevention for autonomous AI coding agents.**
 
 [![GitHub Stars](https://img.shields.io/github/stars/intutic/intutic?style=social)](https://github.com/intutic/intutic)
 [![npm](https://img.shields.io/npm/v/@intutic/cli?label=npm&color=cb3837&logo=npm)](https://www.npmjs.com/package/@intutic/cli)
