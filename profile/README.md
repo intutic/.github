@@ -2,7 +2,7 @@
 
 # Intutic — The Circuit Breaker for AI Agents
 
-**Real-time security, secret DLP, graph guardrails and loop burn prevention for autonomous AI coding agents.**
+**Policy as code for AI agents: your rules are files in git, enforced at the tool call across 43 agent harnesses.**
 
 [![GitHub Stars](https://img.shields.io/github/stars/intutic/intutic?style=social)](https://github.com/intutic/intutic)
 [![npm](https://img.shields.io/npm/v/@intutic/cli?label=npm&color=cb3837&logo=npm)](https://www.npmjs.com/package/@intutic/cli)
@@ -22,9 +22,9 @@
 
 ## 💡 About Intutic
 
-Existing AI observability tools are **passive** — they log execution data *after* an agent leaks a secret, deletes production files, or runs into infinite loops.
+Observability tools log what an agent did *after* it leaked a secret, deleted files or looped on a paid API.
 
-**Intutic is an active, low-latency circuit breaker.** It sits directly in the tool-call path between AI coding assistants and local shell / production APIs. Every tool execution undergoes sub-5ms policy evaluation — blocking dangerous commands before they execute and steering agentic loops in real time.
+**Intutic is an active circuit breaker at the tool call.** Your rules are Markdown files in `.intutic/sops/`. A gate installed in each agent harness checks every tool call against them before it runs, and a local proxy checks the model traffic. Dangerous commands are refused, secrets are redacted, and loops are steered or stopped. The policy check is a rule decision, not a model call; rules that need a judgement can ask your own self-hosted model.
 
 ---
 
@@ -32,7 +32,7 @@ Existing AI observability tools are **passive** — they log execution data *aft
 
 | Repository | Description | Stars / Status |
 | :--- | :--- | :--- |
-| 🛡️ [**`intutic/intutic`**](https://github.com/intutic/intutic) | The primary open-core repository containing the Rust Proxy, `@intutic/cli`, `@intutic/clawde` SDK, and WASM Rules Engine. | [![GitHub Stars](https://img.shields.io/github/stars/intutic/intutic?style=flat)](https://github.com/intutic/intutic) |
+| 🛡️ [**`intutic/intutic`**](https://github.com/intutic/intutic) | The open-core repository: the Rust proxy, `@intutic/cli`, the tool-call gates (`@intutic/gate` for TypeScript, `intutic-clawde` for Python), the `@intutic/clawde` client SDK, the MCP governance proxy and the WASM rules SDK. | [![GitHub Stars](https://img.shields.io/github/stars/intutic/intutic?style=flat)](https://github.com/intutic/intutic) |
 
 ---
 
@@ -40,25 +40,26 @@ Existing AI observability tools are **passive** — they log execution data *aft
 
 ```mermaid
 flowchart TD
-    subgraph DevEnvironment[" 💻 Developer Environment "]
-        Agent["🤖 AI Coding Agent<br><i>(Claude Code, Cursor, Aider, LangGraph)</i>"]
-        SOP["📝 Local SOP Rules<br><i>(CLAUDE.md / .cursorrules / SKILL.md)</i>"]
+    subgraph Dev[" 💻 Developer machine "]
+        Agent["🤖 AI coding agent<br><i>(Claude Code, Cursor, Codex, Aider, LangGraph, …)</i>"]
+        SOP["📝 SOP rules<br><i>(.intutic/sops/)</i>"]
+        Gate["🚦 Tool-call gate<br><i>(runs before each tool call)</i>"]
     end
 
-    subgraph HotPathProxy[" ⚡ Intutic Hot-Path Proxy (:4000) "]
-        Engine["🔒 WASM Policy Engine<br><i>(&lt;5ms Evaluation Latency)</i>"]
-        DLP["🔐 Secret DLP & Masking"]
-        PCAS["🛡️ PCAS Action Primitives<br><code>BYPASS</code> | <code>ENHANCE</code> | <code>HIJACK</code> | <code>KILL</code>"]
+    subgraph Proxy[" ⚡ Intutic proxy (:4000) "]
+        Checks["🔒 Checks on each request and response<br><i>SOP rules · WASM rules · DLP · anomaly detectors · budget</i>"]
+        Verdicts["Verdicts<br><code>BYPASS</code> | <code>HIJACK</code> | <code>REASK</code> | <code>KILL</code>"]
     end
 
-    subgraph UpstreamProviders[" 🌐 Upstream Providers "]
-        Providers["Anthropic API / OpenAI / LiteLLM / Ollama"]
-    end
+    Providers["🌐 LLM providers<br><i>Anthropic · OpenAI · Gemini · Bedrock · Vertex · Azure · …</i>"]
 
-    Agent -->|1. Tool Call / Prompt| HotPathProxy
-    SOP -->|2. Rule Sync| HotPathProxy
-    HotPathProxy -->|3. Clean Request| UpstreamProviders
-    Engine -->|4. Block/Hijack Verdict| Agent
+    Agent -->|1. Model request| Proxy
+    Proxy -->|2. Allowed request| Providers
+    Providers -->|3. Response with tool calls| Proxy
+    Proxy -->|4. Response, or refusal| Agent
+    Agent -->|5. Each tool call| Gate
+    SOP -->|Compiled into the gate and reloaded by the proxy| Checks
+    SOP --> Gate
 ```
 
 ---
@@ -70,13 +71,20 @@ flowchart TD
 npm install -g @intutic/cli @intutic/proxy
 ```
 
-### 2. Start the Proxy
+### 2. Install the Gates
+```bash
+intutic init
+intutic gates install
+```
+This detects the coding agents in your project and installs a blocking gate in each.
+
+### 3. Start the Proxy
 ```bash
 intutic start
 ```
 No account, no Docker, no config file. Everything runs on your machine.
 
-### 3. Route Your Agent
+### 4. Route Your Agent
 ```bash
 # Anthropic SDK and Claude Code append /v1/messages themselves — host only.
 export ANTHROPIC_BASE_URL="http://localhost:4000"
@@ -87,10 +95,13 @@ export OPENAI_BASE_URL="http://localhost:4000/v1"
 
 ## 🔌 Supported Harnesses & Frameworks
 
-Intutic provides zero-code-change governance across **18+ AI tools**:
+Intutic ships **43 harness adapters**:
 
-* **Single-Agent Assistants:** Claude Code CLI, Cursor, Windsurf, Aider, Antigravity, Cline, Roo Code, Codex, OpenWebUI, Goose, Continue.
-* **Multi-Agent Frameworks:** LangGraph, CrewAI, AutoGen, OpenHands, OpenClaw, Hermes, n8n.
+* **Native hook gates** (no change to your agent's code): Claude Code, Cursor, Windsurf, Cline, Codex, Goose, GitHub Copilot, OpenCode and more.
+* **SDK-gated frameworks** (an in-process gate you add to your agent): LangGraph, LangChain, CrewAI, AutoGen, AG2, Google ADK, OpenAI Agents SDK, Pydantic AI, smolagents, AWS Strands Agents, Microsoft Agent Framework, Mastra, Vercel AI SDK and more.
+* **Through the proxy alone:** Aider, Claude Desktop, Roo Code, Continue (these also use the MCP governance proxy where they have MCP), and anything else that honours `OPENAI_BASE_URL` or `ANTHROPIC_BASE_URL`.
+
+The full list is in the [main repository](https://github.com/intutic/intutic#-supported-harnesses--frameworks).
 
 ---
 
